@@ -11,23 +11,23 @@
                     <button name="in_progress" string="In Progress"
                             groups="tickets.tickets_worker"
                             type="object" class="oe_highlight"
-                            attrs="{'invisible': ['|','|',('state', 'in', ['in_progress','on_hold','completed','cancelled']),('done_check', '=', True), ('make_visible_head_batch', '=', True)]}"/>
+                            attrs="{'invisible': ['|',('state', 'in', ['in_progress','on_hold','completed','cancelled']),('done_check', '=', True)]}"/>
                     <button name="on_hold" string="Hold"
                             groups="tickets.tickets_worker"
                             type="object" class="oe_highlight"
-                            attrs="{'invisible': ['|',('state', 'in', ['draft','on_hold','completed','cancelled']), ('make_visible_head_batch', '=', True)]}"/>
+                            attrs="{'invisible': [('state', 'in', ['draft','on_hold','completed','cancelled'])]}"/>
                     <button name="completed" string="Completed"
                             groups="tickets.tickets_worker"
                             type="object" class="oe_highlight"
-                            attrs="{'invisible': ['|',('state', 'in', ['in_progress','draft','cancelled','completed']), ('make_visible_head_batch', '=', True)]}"/>
+                            attrs="{'invisible': [('state', 'in', ['in_progress','draft','cancelled','completed'])]}"/>
                     <button name="cancelled" string="Cancel"
                             groups="tickets.tickets_worker"
                             type="object"
-                            attrs="{'invisible': ['|','|',('state', 'in', ['completed','cancelled']),('done_check', '=', True), ('make_visible_head_batch', '=', True)]}"/>
+                            attrs="{'invisible': ['|',('state', 'in', ['completed','cancelled']),('done_check', '=', True)]}"/>
                     <button name="reassign" string="Re Assign"
                             groups="tickets.tickets_worker"
                             type="object"
-                            attrs="{'invisible': ['|','|',('state', 'in', ['in_progress','on_hold','completed','cancelled']),('done_check', '=', True), ('make_visible_head_batch', '=', True)]}"/>
+                            attrs="{'invisible': ['|',('state', 'in', ['in_progress','on_hold','completed','cancelled']),('done_check', '=', True)]}"/>
                     <button name="done" string="Done"
                             groups="tickets.tickets_worker"
                             type="object"
@@ -43,7 +43,7 @@
 
                     <group>
                         <group>
-                            <field name="done_check" invisible="1"/>
+                            <field name="done_check"/>
                             <field name="re_assign_id" attrs="{'invisible': [('reassign_check', '=', False)]}"/>
                             <field name="name"/>
                             <field name="date"/>
@@ -51,8 +51,8 @@
                             <field name="description"/>
                             <field name="priority"/>
                             <field name="reassign_check" invisible="1"/>
-                            <field name="task_worker_id" invisible="1"/>
-                            <field name="make_visible_head_batch" invisible="1"/>
+                            <field name="task_worker_id" />
+                            <field name="make_visible_head_batch"/>
                             <field name="dd" invisible="1"/>
                         </group>
                         <group>
