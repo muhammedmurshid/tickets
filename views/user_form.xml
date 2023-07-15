@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <record id="user_service_form_views" model="ir.ui.view">
+        <field name="name">Tickets</field>
+        <field name="model">user.service.form</field>
+        <field name="type">form</field>
+        <field name="arch" type="xml">
+            <form string="Form">
+                <header>
+                    <field name="state" widget="statusbar"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="date"/>
+                            <field name="type" options="{'no_create': True}"/>
+                            <field name="description"/>
+                            <field name="priority"/>
+                            <field name="rating" widget="priority"
+                                   attrs="{'invisible': [('state', '!=', 'completed')]}"/>
+                            <field name="task_worker_id"/>
+                        </group>
+                        <group>
+                            <field name="dead_line"/>
+                            <field name="attachment_file"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Notes" name="notes">
+                            <group>
+                                <field name="note"/>
+
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids" options="{'post_refresh': 'recipients'}"/>
+                </div>
+            </form>
+        </field>
+    </record>
+    <record id="user_service_form_tree" model="ir.ui.view">
+        <field name="name">Tickets</field>
+        <field name="model">user.service.form</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="type"/>
+                <field name="rating" widget="priority"/>
+            </tree>
+        </field>
+    </record>
+    <record id="user_form_lead_kanban" model="ir.ui.view">
+        <field name="name">Tickets</field>
+        <field name="model">user.service.form</field>
+        <field name="priority" eval="100"/>
+        <field name="arch" type="xml">
+            <kanban class="o_kanban_mobile" archivable="false" js_class="crm_kanban" sample="1">
+                <field name="name"/>
+                <field name="rating"/>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div t-attf-class="oe_kanban_content oe_kanban_global_click">
+                            <div>
+                                <strong class="o_kanban_record_title">
+                                    <span>
+                                        <field name="name"/>
+                                    </span>
+                                </strong>
+                            </div>
+
+                            <div>
+                                <field name="rating" widget="priority"/>
+                            </div>
+
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <record model="ir.actions.act_window" id="user_service_form_action">
+        <field name="name">Tickets</field>
+        <field name="res_model">user.service.form</field>
+        <field name="view_mode">tree,kanban,form</field>
+    </record>
+<!--    <menuitem name="Tickets" id="menu_user_service_type"-->
+<!--              action="user_service_form_action"-->
+<!--              parent="menu_tickets"-->
+<!--              sequence="3"/>-->
+
+</odoo>

@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <record id="logic_tickets_views" model="ir.ui.view">
+        <field name="name">Tickets</field>
+        <field name="model">project.tickets</field>
+        <field name="type">form</field>
+        <field name="arch" type="xml">
+            <form string="Form">
+                <header>
+                    <field name="state" widget="statusbar"/>
+                    <button name="in_progress" string="In Progress"
+                            groups="tickets.tickets_worker"
+                            type="object" class="oe_highlight"
+                            attrs="{'invisible': ['|','|',('state', 'in', ['in_progress','on_hold','completed','cancelled']),('done_check', '=', True), ('make_visible_head_batch', '=', True)]}"/>
+                    <button name="on_hold" string="Hold"
+                            groups="tickets.tickets_worker"
+                            type="object" class="oe_highlight"
+                            attrs="{'invisible': ['|',('state', 'in', ['draft','on_hold','completed','cancelled']), ('make_visible_head_batch', '=', True)]}"/>
+                    <button name="completed" string="Completed"
+                            groups="tickets.tickets_worker"
+                            type="object" class="oe_highlight"
+                            attrs="{'invisible': ['|',('state', 'in', ['in_progress','draft','cancelled','completed']), ('make_visible_head_batch', '=', True)]}"/>
+                    <button name="cancelled" string="Cancel"
+                            groups="tickets.tickets_worker"
+                            type="object"
+                            attrs="{'invisible': ['|','|',('state', 'in', ['completed','cancelled']),('done_check', '=', True), ('make_visible_head_batch', '=', True)]}"/>
+                    <button name="reassign" string="Re Assign"
+                            groups="tickets.tickets_worker"
+                            type="object"
+                            attrs="{'invisible': ['|','|',('state', 'in', ['in_progress','on_hold','completed','cancelled']),('done_check', '=', True), ('make_visible_head_batch', '=', True)]}"/>
+                    <button name="done" string="Done"
+                            groups="tickets.tickets_worker"
+                            type="object"
+                            attrs="{'invisible': ['|',('state', 'in', ['in_progress','on_hold','completed','cancelled']), ('done_check', '=', False)]}"/>
+
+                </header>
+                <sheet>
+                    <div>
+                        <h2>
+                            <field name="reference_no" readonly="True"/>
+                        </h2>
+                    </div>
+
+                    <group>
+                        <group>
+                            <field name="done_check" invisible="1"/>
+                            <field name="re_assign_id" attrs="{'invisible': [('reassign_check', '=', False)]}"/>
+                            <field name="name"/>
+                            <field name="date"/>
+                            <field name="type" options="{'no_create': True}"/>
+                            <field name="description"/>
+                            <field name="priority"/>
+                            <field name="reassign_check" invisible="1"/>
+                            <field name="task_worker_id" invisible="1"/>
+                            <field name="make_visible_head_batch" invisible="1"/>
+                            <field name="dd" invisible="1"/>
+                        </group>
+                        <group>
+                            <field name="dead_line"/>
+                            <field name="attachment_file"/>
+                            <field name="check_same_user_id" invisible="True"/>
+                            <field name="rating" widget="priority"
+                                   attrs="{'invisible': [('state', '!=', 'completed')]}"/>
+                            <field name="status" groups="tickets.tickets_worker"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Notes" name="notes">
+                            <group>
+                                <field name="note"/>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids" options="{'post_refresh': 'recipients'}"/>
+                </div>
+            </form>
+        </field>
+    </record>
+    <record id="logic_project_tickets_tree" model="ir.ui.view">
+        <field name="name">Tickets</field>
+        <field name="model">project.tickets</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="reference_no"/>
+                <field name="name"/>
+                <field name="date"/>
+                <field name="type"/>
+                <field name="dead_line"/>
+                <field name="rating" widget="priority"/>
+                <field name="state"/>
+            </tree>
+
+        </field>
+    </record>
+    <record id="seq_project_tickets" model="ir.sequence">
+        <field name="name">Tickets</field>
+        <field name="code">project.tickets</field>
+        <field name="active">TRUE</field>
+        <field name="prefix">ST</field>
+        <field name="padding">3</field>
+        <field name="number_next">1</field>
+        <field name="number_increment">1</field>
+    </record>
+    <record id="user_form_kanban" model="ir.ui.view">
+        <field name="name">Tickets</field>
+        <field name="model">project.tickets</field>
+        <field name="priority" eval="100"/>
+        <field name="arch" type="xml">
+            <kanban class="o_kanban_mobile" archivable="false" js_class="crm_kanban" sample="1">
+                <field name="name"/>
+                <field name="rating"/>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div t-attf-class="oe_kanban_content oe_kanban_global_click">
+                            <div>
+                                <strong class="o_kanban_record_title">
+                                    <span>
+                                        <field name="name"/>
+                                    </span>
+                                </strong>
+                            </div>
+
+                            <div>
+                                <field name="rating" widget="priority"/>
+                            </div>
+
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <record model="ir.actions.act_window" id="tickets_action">
+        <field name="name">Tickets</field>
+        <field name="res_model">project.tickets</field>
+        <field name="domain">[('name', '=', uid)]</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+    <menuitem name="Tickets" id="menu_tickets"
+              web_icon="tickets/static/description/icon.png"
+              sequence="9"/>
+    <menuitem name="Tickets" id="menu_tickets_view"
+              action="tickets_action"
+              parent="menu_tickets"
+              sequence="1"/>
+
+
+</odoo>

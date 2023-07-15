@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <record id="logic_my_tasks_views" model="ir.ui.view">
+        <field name="name">Tasks</field>
+        <field name="model">my.tasks</field>
+        <field name="type">form</field>
+        <field name="arch" type="xml">
+            <form string="Tickets">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                        </group>
+                    </group>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids" options="{'post_refresh': 'recipients'}"/>
+                </div>
+            </form>
+        </field>
+    </record>
+    <record id="logic_my_tasks_tree" model="ir.ui.view">
+        <field name="name">Tasks</field>
+        <field name="model">my.tasks</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+            </tree>
+
+        </field>
+    </record>
+
+    <record model="ir.actions.act_window" id="my_tasks_action">
+        <field name="name">Tasks</field>
+        <field name="res_model">project.tickets</field>
+        <field name="domain">[('task_worker_id', '=', uid)]</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem name="My Tasks" id="menu_my_tasks_view"
+              parent="menu_tickets"
+              groups="tickets.tickets_worker"
+              sequence="1"/>
+    <menuitem name="My Tasks" id="menu_tasks_view"
+              action="my_tasks_action"
+              parent="menu_my_tasks_view"
+              groups="tickets.tickets_worker"
+              sequence="1"/>
+
+
+
+</odoo>
