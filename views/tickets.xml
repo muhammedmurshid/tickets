@@ -142,7 +142,7 @@
         <field name="domain">[('name', '=', uid)]</field>
         <field name="view_mode">tree,form</field>
     </record>
-    <menuitem name="Tickets" id="menu_tickets"
+    <menuitem name="Helpdesk" id="menu_tickets"
               web_icon="tickets/static/description/icon.png"
               sequence="9"/>
     <menuitem name="Tickets" id="menu_tickets_view"
