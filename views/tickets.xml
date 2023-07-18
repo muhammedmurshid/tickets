@@ -91,7 +91,7 @@
                 <field name="date"/>
                 <field name="type"/>
                 <field name="dead_line"/>
-                <field name="rating" widget="priority"/>
+<!--                <field name="rating"/>-->
                 <field name="state"/>
             </tree>
 
