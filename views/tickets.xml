@@ -43,7 +43,7 @@
 
                     <group>
                         <group>
-                            <field name="done_check"/>
+                            <field name="done_check" invisible="1"/>
                             <field name="re_assign_id" attrs="{'invisible': [('reassign_check', '=', False)]}"/>
                             <field name="name"/>
                             <field name="date"/>
@@ -51,8 +51,8 @@
                             <field name="description"/>
                             <field name="priority"/>
                             <field name="reassign_check" invisible="1"/>
-                            <field name="task_worker_id" />
-                            <field name="make_visible_head_batch"/>
+                            <field name="task_worker_id" invisible="1"/>
+                            <field name="make_visible_head_batch" invisible="1"/>
                             <field name="dd" invisible="1"/>
                         </group>
                         <group>
