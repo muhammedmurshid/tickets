@@ -29,6 +29,7 @@ class ProjectTickets(models.Model):
         ('draft', 'Draft'), ('in_progress', 'In Progress'), ('on_hold', 'On Hold'), ('completed', 'Completed'),
         ('cancelled', 'Cancelled')
     ], string='Status', default='draft')
+    solution_taken = fields.Text(string='Solution Taken')
 
     @api.depends('type', 're_assign_id')
     def get_batch_head(self):

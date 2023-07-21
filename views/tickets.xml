@@ -58,10 +58,12 @@
                         <group>
                             <field name="dead_line"/>
                             <field name="attachment_file"/>
+                            <field name="solution_taken" groups="tickets.tickets_worker"/>
                             <field name="check_same_user_id" invisible="True"/>
                             <field name="rating" widget="priority"
                                    attrs="{'invisible': [('state', '!=', 'completed')]}"/>
-                            <field name="status" groups="tickets.tickets_worker"/>
+                            <field name="create_uid" invisible="1"/>
+                            <field name="status" groups="tickets.tickets_worker" invisible="1"/>
                         </group>
                     </group>
                     <notebook>
@@ -91,7 +93,7 @@
                 <field name="date"/>
                 <field name="type"/>
                 <field name="dead_line"/>
-<!--                <field name="rating"/>-->
+                <!--                <field name="rating"/>-->
                 <field name="state"/>
             </tree>
 
