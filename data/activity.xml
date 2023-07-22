@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <record id="mail_activity_type_tickets" model="mail.activity.type">
+        <field name="name">Tickets</field>
+        <field name="res_model_id" ref="tickets.model_project_tickets"/>
+        <field name="delay_count">30</field>
+    </record>
+    <data noupdate="1">
+        <record id="ir_tickets_activity_days" model="ir.cron">
+            <field name="name">Tickets</field>
+            <field name="model_id" ref="model_project_tickets"/>
+            <field name="state">code</field>
+            <field name="code">model.teacher_refund_activity()</field>
+            <field name="active" eval="True"/>
+            <field name="interval_number">5</field>
+            <field name="interval_type">days</field>
+            <field name="numbercall">-1</field>
+            <field name="doall" eval="False"/>
+        </record>
+        <record id="ir_tickets_activity_worker_days" model="ir.cron">
+            <field name="name">Ticket Worker</field>
+            <field name="model_id" ref="model_student_refund"/>
+            <field name="state">code</field>
+            <field name="code">model.head_refund_activity()</field>
+            <field name="active" eval="True"/>
+            <field name="interval_number">5</field>
+            <field name="interval_type">days</field>
+            <field name="numbercall">-1</field>
+            <field name="doall" eval="False"/>
+        </record>
+    </data>
+</odoo>

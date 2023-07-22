@@ -144,12 +144,22 @@
         <field name="domain">[('name', '=', uid)]</field>
         <field name="view_mode">tree,form</field>
     </record>
+    <record model="ir.actions.act_window" id="all_tickets_action">
+        <field name="name">Tickets</field>
+        <field name="res_model">project.tickets</field>
+        <field name="view_mode">tree,form</field>
+    </record>
     <menuitem name="Helpdesk" id="menu_tickets"
               web_icon="tickets/static/description/icon.png"
               sequence="9"/>
     <menuitem name="Tickets" id="menu_tickets_view"
               action="tickets_action"
               parent="menu_tickets"
+              sequence="1"/>
+    <menuitem name="All Tickets" id="menu_all_tickets_view"
+              action="all_tickets_action"
+              parent="menu_tickets"
+              groups="tickets.tickets_admin"
               sequence="1"/>
 
 

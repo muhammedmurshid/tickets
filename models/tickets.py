@@ -90,6 +90,10 @@ class ProjectTickets(models.Model):
     def in_progress(self):
         self.message_post(body="Changed State Draft to In Progress")
         self.state = 'in_progress'
+        # users = ss.env.ref('tickets.tickets_worker').users
+        # activity_type = i.env.ref('tickets.mail_activity_type_tickets')
+        # i.activity_schedule('Refund.mail_activity_refund_alert_custome', user_id=i.assign_to.id,
+        #                     note=f'Please Approve {i.assign_to.name}')
 
     def on_hold(self):
         self.message_post(body="Changed State In Progress to On Hold")
