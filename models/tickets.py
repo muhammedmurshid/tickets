@@ -1,10 +1,12 @@
 from odoo import models, fields, api, _
+from datetime import datetime
 
 
 class ProjectTickets(models.Model):
     _name = 'project.tickets'
     _description = 'Ticket'
     _inherit = ['mail.thread', 'mail.activity.mixin']
+    _rec_name = 'type'
 
     name = fields.Many2one('res.users', string='Name', default=lambda self: self.env.user, readonly=True)
     reference_no = fields.Char(string="Service Ticket", readonly=True, required=True,
@@ -22,7 +24,8 @@ class ProjectTickets(models.Model):
         ('nil', 'Nil'), ('one', 'One'), ('two', 'Two'), ('three', 'Three')
     ], string='Rating')
     state = fields.Selection([
-        ('draft', 'Draft'), ('in_progress', 'In Progress'), ('on_hold', 'On Hold'), ('completed', 'Completed'),
+        ('draft', 'Draft'), ('sent', 'Ticket Sent'), ('in_progress', 'In Progress'), ('on_hold', 'On Hold'),
+        ('completed', 'Completed'),
         ('cancelled', 'Cancelled')
     ], string='Status', default='draft', compute='_compute_status', store=True)
     status = fields.Selection([
@@ -47,8 +50,25 @@ class ProjectTickets(models.Model):
 
     make_visible_head_batch = fields.Boolean(string="User", default=True, compute='get_batch_head', store=True)
 
+    def action_confirm(self):
+        self.state = 'sent'
+        ss = self.env['project.tickets'].search([])
+        # users = ss.env.ref('tickets.tickets_worker').users
+        # for j in users:
+        #     print(j.id, 'ooooo')
+        #     print(self.task_worker_id.id, 'jjjoop')
+        #     if self.task_worker_id.id == j.id:
+        #         self.activity_schedule('tickets.mail_activity_type_tickets_id', user_id=self.task_worker_id.id,
+        #                                note=f'Please Check Tickets {j.name}')
+        #         print(j.name, 'jjjj')
+        #     else:
+        #         print('not same')
+        self.activity_schedule('tickets.mail_activity_type_tickets_id', user_id=self.task_worker_id.id,
+                               note=f'Please Check Tickets {self.task_worker_id.name}')
+
     @api.model
     def create(self, vals):
+        ss = self.env['project.tickets'].search([])
         if vals.get('reference_no', _('New')) == _('New'):
             vals['reference_no'] = self.env['ir.sequence'].next_by_code(
                 'project.tickets') or _('New')
@@ -88,12 +108,15 @@ class ProjectTickets(models.Model):
         self.re_assign_id = self.type.assign_to.id
 
     def in_progress(self):
+        ss = self.env['project.tickets'].search([])
         self.message_post(body="Changed State Draft to In Progress")
         self.state = 'in_progress'
-        # users = ss.env.ref('tickets.tickets_worker').users
-        # activity_type = i.env.ref('tickets.mail_activity_type_tickets')
-        # i.activity_schedule('Refund.mail_activity_refund_alert_custome', user_id=i.assign_to.id,
-        #                     note=f'Please Approve {i.assign_to.name}')
+        activity_id = self.env['mail.activity'].search([('res_id', '=', self.id), ('user_id', '=', self.env.user.id), (
+            'activity_type_id', '=', self.env.ref('tickets.mail_activity_type_tickets_id').id)])
+        activity_id.action_feedback(feedback=f'In Progress')
+        other_activity_ids = self.env['mail.activity'].search([('res_id', '=', self.id), (
+            'activity_type_id', '=', self.env.ref('tickets.mail_activity_type_tickets_id').id)])
+        other_activity_ids.unlink()
 
     def on_hold(self):
         self.message_post(body="Changed State In Progress to On Hold")
@@ -116,6 +139,50 @@ class ProjectTickets(models.Model):
         self.reassign_check = True
         self.done_check = True
         self.dd = self.re_assign_id
+        activity_id = self.env['mail.activity'].search(
+            [('res_id', '=', self.id), ('user_id', '=', self.env.user.id), (
+                'activity_type_id', '=', self.env.ref('tickets.mail_activity_type_tickets_id').id)])
+        activity_id.action_feedback(feedback=f'In Progress')
+        other_activity_ids = self.env['mail.activity'].search([('res_id', '=', self.id), (
+            'activity_type_id', '=', self.env.ref('tickets.mail_activity_type_tickets_id').id)])
+        other_activity_ids.unlink()
+
+    re_ass_tree_check = fields.Boolean(string='check tree reassign', default=False)
+
+    def admin_due_tickets(self):
+        print('hhhi')
+        ss = self.env['project.tickets'].search([])
+        current_datetime = datetime.now()
+
+        for i in ss:
+            if i.dead_line:
+                if current_datetime > i.dead_line:
+                    if i.state in 'sent' or i.state in 'in_progress' or i.state in 'on_hold':
+                        users = ss.env.ref('tickets.tickets_admin').users
+                        for rec in users:
+                            i.activity_schedule('tickets.mail_activity_type_tickets_id', user_id=rec.id,
+                                                note=f'Due Tickets')
+
+            else:
+                print('not due')
+
+    def admin_due_tickets_remove(self):
+        print('hhhi')
+        ss = self.env['project.tickets'].search([])
+        current_datetime = datetime.now()
+
+        for i in ss:
+            if i.state in 'completed' or i.state in 'cancelled':
+                activity_id = self.env['mail.activity'].search(
+                    [('res_id', '=', self.id), ('user_id', '=', self.env.user.id), (
+                        'activity_type_id', '=', self.env.ref('tickets.mail_activity_type_tickets_id').id)])
+                activity_id.action_feedback(feedback=f'In Progress')
+                other_activity_ids = self.env['mail.activity'].search([('res_id', '=', self.id), (
+                    'activity_type_id', '=', self.env.ref('tickets.mail_activity_type_tickets_id').id)])
+                other_activity_ids.unlink()
+
+            else:
+                print('not due')
 
     @api.onchange('re_assign_id')
     def _compute_reassign(self):
@@ -138,15 +205,28 @@ class ProjectTickets(models.Model):
         if self.re_assign_id:
             if self.re_assign_id.id != self.dd.id:
                 self.message_post(body=message)
+                self.re_ass_tree_check = True
+                ss = self.env['project.tickets'].search([])
+                users = ss.env.ref('tickets.tickets_worker').users
+                for j in users:
+                    print(j.id, 'ooooo')
+                    print(self.task_worker_id.id, 'jjjoop')
+                    if self.re_assign_id.id == j.id:
+                        self.activity_schedule('tickets.mail_activity_type_tickets_id', user_id=j.id,
+                                               note=f'Re Assigned {self.env.user.name}')
+
+                        print(j.name, 'jjjj')
+                    else:
+                        print('not same')
             else:
                 print('koll')
         self.reassign_check = False
         self.done_check = False
 
-    # def write(self, vals):
-    #     print('write')
-    #     if self.re_assign_id:
-    #         self.ensure_one_open_todo()
-    #     # if self.re_assign_id:
-    #     #     self.task_worker_id = self.re_assign_id
-    #     return super(ProjectTickets, self).write(vals)
+# def write(self, vals):
+#     print('write')
+#     if self.re_assign_id:
+#         self.ensure_one_open_todo()
+#     # if self.re_assign_id:
+#     #     self.task_worker_id = self.re_assign_id
+#     return super(ProjectTickets, self).write(vals)

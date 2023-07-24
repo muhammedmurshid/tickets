@@ -8,30 +8,33 @@
             <form string="Form">
                 <header>
                     <field name="state" widget="statusbar"/>
+                    <button name="action_confirm" string="Confirm"
+                            attrs="{'invisible': ['|',('state', 'in', ['sent','in_progress','on_hold','completed','cancelled']),('done_check', '=', True)]}"
+                            type="object" class="oe_highlight"/>
                     <button name="in_progress" string="In Progress"
                             groups="tickets.tickets_worker"
                             type="object" class="oe_highlight"
-                            attrs="{'invisible': ['|',('state', 'in', ['in_progress','on_hold','completed','cancelled']),('done_check', '=', True)]}"/>
+                            attrs="{'invisible': ['|',('state', 'in', ['draft','in_progress','on_hold','completed','cancelled']),('done_check', '=', True)]}"/>
                     <button name="on_hold" string="Hold"
                             groups="tickets.tickets_worker"
                             type="object" class="oe_highlight"
-                            attrs="{'invisible': [('state', 'in', ['draft','on_hold','completed','cancelled'])]}"/>
+                            attrs="{'invisible': [('state', 'in', ['sent','draft','on_hold','completed','cancelled'])]}"/>
                     <button name="completed" string="Completed"
                             groups="tickets.tickets_worker"
                             type="object" class="oe_highlight"
-                            attrs="{'invisible': [('state', 'in', ['in_progress','draft','cancelled','completed'])]}"/>
+                            attrs="{'invisible': [('state', 'in', ['sent','in_progress','draft','cancelled','completed'])]}"/>
                     <button name="cancelled" string="Cancel"
                             groups="tickets.tickets_worker"
                             type="object"
-                            attrs="{'invisible': ['|',('state', 'in', ['completed','cancelled']),('done_check', '=', True)]}"/>
+                            attrs="{'invisible': ['|',('state', 'in', ['draft','completed','cancelled']),('done_check', '=', True)]}"/>
                     <button name="reassign" string="Re Assign"
                             groups="tickets.tickets_worker"
                             type="object"
-                            attrs="{'invisible': ['|',('state', 'in', ['in_progress','on_hold','completed','cancelled']),('done_check', '=', True)]}"/>
+                            attrs="{'invisible': ['|',('state', 'in', ['draft','in_progress','on_hold','completed','cancelled']),('done_check', '=', True)]}"/>
                     <button name="done" string="Done"
                             groups="tickets.tickets_worker"
                             type="object"
-                            attrs="{'invisible': ['|',('state', 'in', ['in_progress','on_hold','completed','cancelled']), ('done_check', '=', False)]}"/>
+                            attrs="{'invisible': ['|',('state', 'in', ['draft','in_progress','on_hold','completed','cancelled']), ('done_check', '=', False)]}"/>
 
                 </header>
                 <sheet>
@@ -44,6 +47,7 @@
                     <group>
                         <group>
                             <field name="done_check" invisible="1"/>
+                            <field name="re_ass_tree_check" invisible="1"/>
                             <field name="re_assign_id" attrs="{'invisible': [('reassign_check', '=', False)]}"/>
                             <field name="name"/>
                             <field name="date"/>
@@ -90,6 +94,8 @@
             <tree>
                 <field name="reference_no"/>
                 <field name="name"/>
+                <field name="re_ass_tree_check" invisible="1"/>
+                <field name="re_assign_id" attrs="{'invisible': [('re_ass_tree_check', '=', False)]}"/>
                 <field name="date"/>
                 <field name="type"/>
                 <field name="dead_line"/>

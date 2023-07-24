@@ -4,10 +4,10 @@
     'sequence': "0",
     'depends': ['base', 'mail'],
     'data': [
+        'data/activity.xml',
         'security/groups.xml',
         'security/ir.model.access.csv',
         # 'security/record_rule.xml',
-
         'views/tickets.xml',
 
         'views/user_form.xml',
