@@ -33,6 +33,17 @@ class ProjectTickets(models.Model):
         ('cancelled', 'Cancelled')
     ], string='Status', default='draft')
     solution_taken = fields.Text(string='Solution Taken')
+    purchase = fields.Boolean(string='Purchase')
+    product = fields.Char(string='Product')
+    director_id = fields.Many2one('hr.employee', string='Director', domain=[('department_id.name', '=', 'DIRECTORS')])
+    purchase_assign_id = fields.Many2one('res.users', string='Assign to')
+    product_price = fields.Float(string='Product Price')
+    currency_id = fields.Many2one('res.currency', default=lambda self: self.env.user.company_id.currency_id,
+                                  string='Currency')
+
+    @api.onchange('purchase_assign_id')
+    def get_assign_purchase(self):
+        self.task_worker_id = self.purchase_assign_id.id
 
     @api.depends('type', 're_assign_id')
     def get_batch_head(self):
@@ -50,6 +61,32 @@ class ProjectTickets(models.Model):
 
     make_visible_head_batch = fields.Boolean(string="User", default=True, compute='get_batch_head', store=True)
 
+    @api.depends('make_visible_user')
+    def get_user(self):
+        print('kkkll')
+        user_crnt = self.env.user.id
+
+        res_user = self.env['res.users'].search([('id', '=', self.env.user.id)])
+        if res_user.has_group('tickets.tickets_worker'):
+            self.make_visible_user = False
+
+        else:
+            self.make_visible_user = True
+
+    make_visible_user = fields.Boolean(string="User", default=True, compute='get_user')
+
+    #
+    # current = self.env.user
+    #
+    # main_content = {
+    #     'subject': 'STUDENT REFUND',
+    #     'body_html': f"<h1>Hello {self.name} Your refund request is rejected..</h1>",
+    #     'email_to': self.email,
+    #     # 'attachment_ids': attachment
+    #
+    # }
+    # self.env['mail.mail'].create(main_content).send()
+
     def action_confirm(self):
         self.state = 'sent'
         ss = self.env['project.tickets'].search([])
@@ -65,6 +102,7 @@ class ProjectTickets(models.Model):
         #         print('not same')
         self.activity_schedule('tickets.mail_activity_type_tickets_id', user_id=self.task_worker_id.id,
                                note=f'Please Check Tickets {self.task_worker_id.name}')
+        # current = self.purchase_assign_id
 
     @api.model
     def create(self, vals):
@@ -126,6 +164,17 @@ class ProjectTickets(models.Model):
     def completed(self):
         self.message_post(body="Changed State On Hold to Completed")
         self.state = 'completed'
+        print('check email')
+
+        main_content = {
+            'subject': 'Product Purchased Successfully',
+            'body_html': f"<p>Hello {self.director_id.name}, {self.product} purchased successfully...."
+                         f"The total price of the product, including all applicable charges, is {self.product_price}</p>",
+            'email_to': self.director_id.work_email,
+            # 'attachment_ids': attachment
+
+        }
+        self.env['mail.mail'].sudo().create(main_content).send()
 
     def cancelled(self):
         self.message_post(body="Cancelled")
@@ -165,6 +214,11 @@ class ProjectTickets(models.Model):
 
             else:
                 print('not due')
+
+    @api.onchange('purchase')
+    def onchange_purchase_director(self):
+        if self.purchase == False:
+            self.director_id = False
 
     def admin_due_tickets_remove(self):
         print('hhhi')
