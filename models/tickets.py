@@ -176,6 +176,30 @@ class ProjectTickets(models.Model):
         }
         self.env['mail.mail'].sudo().create(main_content).send()
 
+    @api.depends('current_user_id')
+    def get_current_user(self):
+        self.current_user_id = self.env.user.id
+
+    current_user_id = fields.Many2one('res.users', compute='get_current_user', string='Current User')
+
+    @api.depends('check_two_users_same')
+    def check_two_users_are_same(self):
+        if self.current_user_id == self.create_uid:
+            self.check_two_users_same = True
+        else:
+            self.check_two_users_same = False
+
+    check_two_users_same = fields.Boolean(compute='check_two_users_are_same', string='Same User')
+
+    @api.depends('check_worker_users_same', 'task_worker_id')
+    def check_workers_are_same(self):
+        if self.current_user_id == self.task_worker_id:
+            self.check_worker_users_same = True
+        else:
+            self.check_worker_users_same = False
+
+    check_worker_users_same = fields.Boolean(compute='check_workers_are_same', string='Same User')
+
     def cancelled(self):
         self.message_post(body="Cancelled")
         self.state = 'cancelled'
