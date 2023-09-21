@@ -76,7 +76,7 @@
                             <field name="purchase"/>
                             <field name="solution_taken" groups="tickets.tickets_worker"/>
                             <field name="check_same_user_id" invisible="True"/>
-                           
+
                             <field name="rating" widget="priority"
                                    attrs="{'invisible': [('state', '!=', 'completed')],'readonly':[('check_two_users_same', '!=', True)]}"/>
                             <field name="create_uid" invisible="1"/>
@@ -238,6 +238,23 @@
               parent="menu_tickets"
               groups="tickets.tickets_admin"
               sequence="1"/>
+    
+    <!--    <record id="view_order_tree_less_inherited" model="ir.ui.view">-->
+    <!--        <field name="name">calendar2gg.inherited</field>-->
+    <!--        <field name="model">hr.leave</field>-->
+    <!--        <field name="inherit_id" ref="hr_holidays.hr_leave_view_dashboard"/>-->
+    <!--        <field name="arch" type="xml">-->
+    <!--            &lt;!&ndash;            <calendar js_class="time_off_calendar" string="Time Off Request" form_view_id="%(hr_holidays.hr_leave_view_form_dashboard)d" event_open_popup="true" date_start="date_from" date_stop="date_to_2" mode="month" quick_add="False" color="employee_id">&ndash;&gt;-->
+    <!--            &lt;!&ndash;                <field name="display_name"/>&ndash;&gt;-->
+    <!--            &lt;!&ndash;            </calendar>&ndash;&gt;-->
 
+    <!--                        <calendar position="attributes">-->
+    <!--            <field name="state" position="attributes">-->
+    <!--                <attribute name="domain">[('state', '!=', 'refuse')]</attribute>-->
+    <!--            </field>-->
+    <!--                        </calendar>-->
+
+    <!--        </field>-->
+    <!--    </record>-->
 
 </odoo>

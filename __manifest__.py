@@ -2,7 +2,7 @@
     'name': "Helpdesk",
     'version': "14.0.1.0",
     'sequence': "0",
-    'depends': ['base', 'mail'],
+    'depends': ['base', 'mail', 'hr'],
     'data': [
         'data/activity.xml',
         'security/groups.xml',

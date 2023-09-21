@@ -12,7 +12,7 @@ class ProjectTickets(models.Model):
     reference_no = fields.Char(string="Service Ticket", readonly=True, required=True,
                                copy=False, default='New')
     date = fields.Datetime(string='Date', default=fields.Datetime.now, readonly=True)
-    type = fields.Many2one('service.type', string='Type')
+    type = fields.Many2one('service.type', string='Type', required=True)
     description = fields.Text(string='Description')
     priority = fields.Selection([
         ('low', 'Low'), ('medium', 'Medium'), ('high', 'High')], string='Priority', default='low')
@@ -75,31 +75,9 @@ class ProjectTickets(models.Model):
 
     make_visible_user = fields.Boolean(string="User", default=True, compute='get_user')
 
-    #
-    # current = self.env.user
-    #
-    # main_content = {
-    #     'subject': 'STUDENT REFUND',
-    #     'body_html': f"<h1>Hello {self.name} Your refund request is rejected..</h1>",
-    #     'email_to': self.email,
-    #     # 'attachment_ids': attachment
-    #
-    # }
-    # self.env['mail.mail'].create(main_content).send()
-
     def action_confirm(self):
         self.state = 'sent'
         ss = self.env['project.tickets'].search([])
-        # users = ss.env.ref('tickets.tickets_worker').users
-        # for j in users:
-        #     print(j.id, 'ooooo')
-        #     print(self.task_worker_id.id, 'jjjoop')
-        #     if self.task_worker_id.id == j.id:
-        #         self.activity_schedule('tickets.mail_activity_type_tickets_id', user_id=self.task_worker_id.id,
-        #                                note=f'Please Check Tickets {j.name}')
-        #         print(j.name, 'jjjj')
-        #     else:
-        #         print('not same')
         self.activity_schedule('tickets.mail_activity_type_tickets_id', user_id=self.task_worker_id.id,
                                note=f'Please Check Tickets {self.task_worker_id.name}')
         # current = self.purchase_assign_id
@@ -230,7 +208,7 @@ class ProjectTickets(models.Model):
         for i in ss:
             if i.dead_line:
                 if current_datetime > i.dead_line:
-                    if i.state in 'sent' or i.state in 'in_progress' or i.state in 'on_hold':
+                    if i.state in 'sent' or i.state in 'in_progress':
                         users = ss.env.ref('tickets.tickets_admin').users
                         for rec in users:
                             i.activity_schedule('tickets.mail_activity_type_tickets_id', user_id=rec.id,
@@ -250,7 +228,7 @@ class ProjectTickets(models.Model):
         current_datetime = datetime.now()
 
         for i in ss:
-            if i.state in 'completed' or i.state in 'cancelled':
+            if i.state in 'completed' or i.state in 'cancelled' or i.state in 'on_hold':
                 activity_id = self.env['mail.activity'].search(
                     [('res_id', '=', self.id), ('user_id', '=', self.env.user.id), (
                         'activity_type_id', '=', self.env.ref('tickets.mail_activity_type_tickets_id').id)])
@@ -308,3 +286,24 @@ class ProjectTickets(models.Model):
 #     # if self.re_assign_id:
 #     #     self.task_worker_id = self.re_assign_id
 #     return super(ProjectTickets, self).write(vals)
+
+
+class RemoveRefusedLeaves(models.Model):
+    _inherit = 'hr.leave'
+
+    def compute_remove_state(self):
+        print('hi leaves')
+        # aa = self.env['hr.leave'].search([])
+        # for rec in aa:
+        #     print(rec.state, 'this state')
+        #     if rec.state == 'refused':
+        #         rec.unlink()
+        #         print(rec.holiday_status_id.name, 'this')
+        #     else:
+        #         print('not')
+
+    # def action_refuse(self):
+    #     self.unlink()
+
+
+
