@@ -27,11 +27,11 @@ class ProjectTickets(models.Model):
         ('draft', 'Draft'), ('sent', 'Ticket Sent'), ('in_progress', 'In Progress'), ('on_hold', 'On Hold'),
         ('completed', 'Completed'),
         ('cancelled', 'Cancelled')
-    ], string='Status', default='draft', compute='_compute_status', store=True)
+    ], string='Status', default='draft', compute='_compute_status', store=True, tracking=True)
     status = fields.Selection([
         ('draft', 'Draft'), ('in_progress', 'In Progress'), ('on_hold', 'On Hold'), ('completed', 'Completed'),
         ('cancelled', 'Cancelled')
-    ], string='Status', default='draft')
+    ], string='Status', default='draft', tracking=True)
     solution_taken = fields.Text(string='Solution Taken')
     purchase = fields.Boolean(string='Purchase')
     product = fields.Char(string='Product')
@@ -76,11 +76,19 @@ class ProjectTickets(models.Model):
     make_visible_user = fields.Boolean(string="User", default=True, compute='get_user')
 
     def action_confirm(self):
+
+        if self.type.assign_to:
+            self.activity_schedule('tickets.mail_activity_type_tickets_id', user_id=self.task_worker_id.id,
+                                   note=f'Please Check Tickets {self.task_worker_id.name}')
+        if self.type.assign_to_users:
+            for i in self.type.assign_to_users:
+
+                self.activity_schedule('tickets.mail_activity_type_tickets_id', user_id=i.id,
+                                       note=f'Please Check Tickets {i.name}')
+
         self.state = 'sent'
-        ss = self.env['project.tickets'].search([])
-        self.activity_schedule('tickets.mail_activity_type_tickets_id', user_id=self.task_worker_id.id,
-                               note=f'Please Check Tickets {self.task_worker_id.name}')
-        # current = self.purchase_assign_id
+
+
 
     @api.model
     def create(self, vals):

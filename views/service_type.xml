@@ -11,6 +11,7 @@
                         <group>
                             <field name="name"/>
                             <field name="assign_to"/>
+                            <field name="assign_to_users" widget="many2many_tags"/>
                         </group>
                     </group>
                 </sheet>
@@ -29,6 +30,7 @@
             <tree>
                 <field name="name"/>
                 <field name="assign_to"/>
+                <field name="assign_to_users" widget="many2many_tags"/>
 
             </tree>
 

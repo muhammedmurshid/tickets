@@ -35,7 +35,7 @@
     <record model="ir.actions.act_window" id="my_tasks_action">
         <field name="name">Tasks</field>
         <field name="res_model">project.tickets</field>
-        <field name="domain">[('task_worker_id', '=', uid)]</field>
+        <field name="domain">['|',('task_worker_id', '=', uid), ('type.assign_to_users.id', '=', uid)]</field>
         <field name="view_mode">kanban,tree,form</field>
     </record>
 
