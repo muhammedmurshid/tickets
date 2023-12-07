@@ -5,7 +5,7 @@
         <record model="ir.rule" id="my_tasks_tickets_view">
             <field name="name">My Tickets</field>
             <field name="model_id" ref="model_service_type"/>
-            <field name="domain_force">['|,('assign_to.id','=', user.id), ('assign_to_users.ids','in', user.id)]</field>
+            <field name="domain_force">[('assign_to.id','=', user.id)]</field>
             <field name="groups" eval="[(4, ref('tickets_worker'))]"/>
             <field name="perm_read" eval="True"/>
             <field name="perm_write" eval="False"/>
@@ -13,4 +13,33 @@
             <field name="perm_unlink" eval="False"/>
         </record>
     </data>
+<!--    <data>-->
+<!--        <function name="write" model="ir.model.data">-->
+<!--            &lt;!&ndash; First we need to find the record...&ndash;&gt;-->
+<!--            <function name="search" model="ir.model.data">-->
+<!--                <value eval="[('module', '=', 'tickets'), ('id', '=', 'my_tasks_tickets_view')]"-->
+<!--                />-->
+<!--            </function>-->
+
+<!--            &lt;!&ndash; ...and temporarily set the noupdate field to False&ndash;&gt;-->
+<!--            <value eval="{'noupdate': False}"/>-->
+<!--        </function>-->
+
+<!--        &lt;!&ndash; Get our main job done, i.e. modify the domain_force field of a record &ndash;&gt;-->
+
+<!--        <record id="tickets.my_tasks_tickets_view" model="ir.rule">-->
+<!--            <field name="domain_force">[('ytyt.id','=', user.id)]</field>-->
+<!--        </record>-->
+
+<!--        &lt;!&ndash; (Optional) Time to clean our dirty hand, set the previously noupdate False to True again &ndash;&gt;-->
+
+<!--        <function name="write" model="ir.model.data">-->
+<!--            <function name="search" model="ir.model.data">-->
+<!--                <value eval="[('module', '=', 'tickets'), ('id', '=', 'my_tasks_tickets_view')]"/>-->
+<!--            </function>-->
+<!--            <value eval="{'noupdate': True}"/>-->
+<!--        </function>-->
+<!--    </data>-->
+
+
 </odoo>

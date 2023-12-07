@@ -6,6 +6,9 @@
         <field name="type">form</field>
         <field name="arch" type="xml">
             <form string="Tickets">
+                <header>
+                    <button name="print_current_users" type="object" string="Print"/>
+                </header>
                 <sheet>
                     <group>
                         <group>
@@ -53,7 +56,7 @@
     <record model="ir.actions.act_window" id="my_tasks_type_action">
         <field name="name">Types</field>
         <field name="res_model">service.type</field>
-        <field name="domain">[('assign_to.id', '=', uid)]</field>
+<!--        <field name="domain">[('assign_to.id', '=', uid)]</field>-->
         <field name="view_mode">tree,form</field>
     </record>
 

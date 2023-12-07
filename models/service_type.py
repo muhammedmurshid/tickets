@@ -9,3 +9,13 @@ class ServiceTypes(models.Model):
     name = fields.Char(string='Service Type', required=True)
     assign_to = fields.Many2one('res.users', string='Assign To', required=True)
     assign_to_users = fields.Many2many('res.users', string='Assign To Users')
+
+    def print_current_users(self):
+
+        for k in self.assign_to_users.ids:
+            print(k, 'ooooo')
+            print(self.env.user.id, 'user')
+            if k == self.env.user.id:
+                print('same')
+            else:
+                print('not same')
