@@ -36,7 +36,7 @@
         <field name="name">Tasks</field>
         <field name="res_model">project.tickets</field>
         <field name="domain">['|',('task_worker_id', '=', uid), ('type.assign_to_users.id', '=', uid)]</field>
-        <field name="view_mode">kanban,tree,form</field>
+        <field name="view_mode">kanban,tree,form,calendar</field>
     </record>
 
     <menuitem name="My Tasks" id="menu_my_tasks_view"

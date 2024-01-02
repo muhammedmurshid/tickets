@@ -66,7 +66,7 @@
                             <field name="priority"/>
                             <field name="currency_id" invisible="1"/>
                             <field name="reassign_check" invisible="1"/>
-                            <field name="task_worker_id"/>
+                            <field name="task_worker_id" groups="base.group_no_one"/>
                             <field name="check_worker_users_same" invisible="1"/>
                             <field name="make_visible_head_batch" invisible="1"/>
                             <field name="make_visible_user" invisible="1"/>
@@ -78,6 +78,7 @@
                             <field name="purchase"/>
                             <field name="solution_taken" groups="tickets.tickets_worker"/>
                             <field name="check_same_user_id" invisible="True"/>
+                            <field name="expected_completion_date" placeholder="service person expected completion date" attrs="{'invisible':[('state','in',['draft'])]}"/>
 
                             <field name="rating" widget="priority"
                                    attrs="{'invisible': [('state', '!=', 'completed')],'readonly':[('check_two_users_same', '!=', True)]}"/>
@@ -178,6 +179,19 @@
 
         </field>
     </record>
+
+    <record id="project_task_calender_view" model="ir.ui.view">
+        <field name="name">project.task.calender.view</field>
+        <field name="model">project.tickets</field>
+        <field name="arch" type="xml">
+            <calendar string="Service Request" date_start="date" date_stop="dead_line" event_open_popup="true"
+                      mode="month" color="task_worker_id" quick_add="False">
+                <field name="task_worker_id"/>
+                <field name="type"/>
+            </calendar>
+        </field>
+    </record>
+
     <record id="seq_project_tickets" model="ir.sequence">
         <field name="name">Tickets</field>
         <field name="code">project.tickets</field>
@@ -187,6 +201,7 @@
         <field name="number_next">1</field>
         <field name="number_increment">1</field>
     </record>
+
     <!--    <record id="user_form_kanban" model="ir.ui.view">-->
     <!--        <field name="name">Tickets</field>-->
     <!--        <field name="model">project.tickets</field>-->
@@ -221,12 +236,12 @@
         <field name="name">Tickets</field>
         <field name="res_model">project.tickets</field>
         <field name="domain">[('name', '=', uid)]</field>
-        <field name="view_mode">kanban,tree,form</field>
+        <field name="view_mode">kanban,tree,form,calendar</field>
     </record>
     <record model="ir.actions.act_window" id="all_tickets_action">
         <field name="name">Tickets</field>
         <field name="res_model">project.tickets</field>
-        <field name="view_mode">kanban,tree,form</field>
+        <field name="view_mode">kanban,tree,form,calendar</field>
     </record>
     <menuitem name="Helpdesk" id="menu_tickets"
               web_icon="tickets/static/description/icon.png"

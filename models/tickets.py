@@ -6,7 +6,7 @@ class ProjectTickets(models.Model):
     _name = 'project.tickets'
     _description = 'Ticket'
     _inherit = ['mail.thread', 'mail.activity.mixin']
-    _rec_name = 'type'
+    _rec_name = 'display_name'
 
     name = fields.Many2one('res.users', string='Name', default=lambda self: self.env.user, readonly=True)
     reference_no = fields.Char(string="Service Ticket", readonly=True, required=True,
@@ -41,6 +41,11 @@ class ProjectTickets(models.Model):
     currency_id = fields.Many2one('res.currency', default=lambda self: self.env.user.company_id.currency_id,
                                   string='Currency')
     added_to_do = fields.Boolean(string='Added To Do')
+    expected_completion_date = fields.Date(string='Expected Completion Date')
+
+    def _compute_display_name(self):
+        for record in self:
+            record.display_name = record.type.name + '-' + str(record.date)
 
     @api.onchange('purchase_assign_id')
     def get_assign_purchase(self):
