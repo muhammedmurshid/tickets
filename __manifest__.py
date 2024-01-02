@@ -13,6 +13,7 @@
         'views/user_form.xml',
         'views/my_tasks.xml',
         'views/service_type.xml',
+        'views/to_do.xml',
 
     ],
     'demo': [],

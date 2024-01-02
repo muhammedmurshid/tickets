@@ -9,33 +9,34 @@
                 <header>
                     <field name="state" widget="statusbar"/>
                     <button name="action_confirm" string="Confirm"
-                            attrs="{'invisible': ['|',('state', 'in', ['sent','in_progress','on_hold','completed','cancelled']),('done_check', '=', True)]}"
+                            attrs="{'invisible': ['|',('state', 'in', ['sent','in_progress','on_hold','to_do','completed','cancelled']),('done_check', '=', True)]}"
                             type="object" class="oe_highlight"/>
                     <button name="in_progress" string="In Progress"
                             groups="tickets.tickets_worker"
                             type="object" class="oe_highlight"
-                            attrs="{'invisible': ['|','|',('state', 'in', ['draft','in_progress','on_hold','completed','cancelled']),('done_check', '=', True), ('check_worker_users_same', '=', False)]}"/>
+                            attrs="{'invisible': ['|',('state', 'in', ['draft','in_progress','to_do','on_hold','completed','cancelled']),('done_check', '=', True)]}"/>
                     <button name="on_hold" string="Hold"
                             groups="tickets.tickets_worker"
                             type="object" class="oe_highlight"
-                            attrs="{'invisible': ['|',('state', 'in', ['sent','draft','on_hold','completed','cancelled']),('check_worker_users_same', '=', False)]}"/>
+                            attrs="{'invisible': [('state', 'in', ['sent','draft','on_hold','to_do','completed','cancelled'])]}"/>
                     <button name="completed" string="Completed"
                             groups="tickets.tickets_worker"
                             type="object" class="oe_highlight"
-                            attrs="{'invisible': ['|',('state', 'in', ['sent','draft','cancelled','completed']), ('check_worker_users_same', '=', False)]}"/>
+                            attrs="{'invisible': [('state', 'in', ['sent','draft','cancelled','to_do','completed'])]}"/>
                     <button name="cancelled" string="Cancel"
                             groups="tickets.tickets_worker"
                             type="object"
-                            attrs="{'invisible': ['|','|',('state', 'in', ['draft','completed','cancelled']),('done_check', '=', True), ('check_worker_users_same', '=', False)]}"/>
+                            attrs="{'invisible': ['|',('state', 'in', ['draft','completed','to_do','cancelled']),('done_check', '=', True)]}"/>
                     <button name="reassign" string="Re Assign"
                             groups="tickets.tickets_worker"
                             type="object"
-                            attrs="{'invisible': ['|','|',('state', 'in', ['draft','in_progress','on_hold','completed','cancelled']),('done_check', '=', True), ('check_worker_users_same', '=', False)]}"/>
+                            attrs="{'invisible': ['|',('state', 'in', ['draft','in_progress','to_do','on_hold','completed','cancelled']),('done_check', '=', True)]}"/>
                     <button name="done" string="Done"
                             groups="tickets.tickets_worker"
                             type="object"
-                            attrs="{'invisible': ['|',('state', 'in', ['draft','in_progress','on_hold','completed','cancelled']), ('done_check', '=', False)]}"/>
-
+                            attrs="{'invisible': ['|',('state', 'in', ['draft','in_progress','on_hold','to_do','completed','cancelled']), ('done_check', '=', False)]}"/>
+                    <button name="action_add_to_to_do" string="Add To Do" class="oe_highlight" type="object"
+                            attrs="{'invisible': ['|',('state', 'in', ['completed','cancelled','draft']), ('added_to_do', '=', True)]}"/>
                 </header>
                 <sheet>
                     <div>
@@ -46,6 +47,7 @@
 
                     <group>
                         <group>
+                            <field name="added_to_do" groups="base.group_no_one"/>
                             <field name="done_check" invisible="1"/>
                             <field name="re_ass_tree_check" invisible="1"/>
                             <field name="re_assign_id" attrs="{'invisible': [('reassign_check', '=', False)]}"/>
@@ -64,7 +66,7 @@
                             <field name="priority"/>
                             <field name="currency_id" invisible="1"/>
                             <field name="reassign_check" invisible="1"/>
-                            <field name="task_worker_id" invisible="1"/>
+                            <field name="task_worker_id"/>
                             <field name="check_worker_users_same" invisible="1"/>
                             <field name="make_visible_head_batch" invisible="1"/>
                             <field name="make_visible_user" invisible="1"/>
@@ -238,7 +240,7 @@
               parent="menu_tickets"
               groups="tickets.tickets_admin"
               sequence="1"/>
-    
+
     <!--    <record id="view_order_tree_less_inherited" model="ir.ui.view">-->
     <!--        <field name="name">calendar2gg.inherited</field>-->
     <!--        <field name="model">hr.leave</field>-->

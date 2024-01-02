@@ -24,12 +24,12 @@ class ProjectTickets(models.Model):
         ('nil', 'Nil'), ('one', 'One'), ('two', 'Two'), ('three', 'Three')
     ], string='Rating')
     state = fields.Selection([
-        ('draft', 'Draft'), ('sent', 'Ticket Sent'), ('in_progress', 'In Progress'), ('on_hold', 'On Hold'),
+        ('draft', 'Draft'), ('sent', 'Ticket Sent'), ('in_progress', 'In Progress'), ('on_hold', 'On Hold'), ('to_do', 'To Do'),
         ('completed', 'Completed'),
         ('cancelled', 'Cancelled')
     ], string='Status', default='draft', compute='_compute_status', store=True, tracking=True)
     status = fields.Selection([
-        ('draft', 'Draft'), ('in_progress', 'In Progress'), ('on_hold', 'On Hold'), ('completed', 'Completed'),
+        ('draft', 'Draft'), ('in_progress', 'In Progress'), ('on_hold', 'On Hold'), ('to_do', 'To Do'), ('completed', 'Completed'),
         ('cancelled', 'Cancelled')
     ], string='Status', default='draft', tracking=True)
     solution_taken = fields.Text(string='Solution Taken')
@@ -40,6 +40,7 @@ class ProjectTickets(models.Model):
     product_price = fields.Float(string='Product Price')
     currency_id = fields.Many2one('res.currency', default=lambda self: self.env.user.company_id.currency_id,
                                   string='Currency')
+    added_to_do = fields.Boolean(string='Added To Do')
 
     @api.onchange('purchase_assign_id')
     def get_assign_purchase(self):
@@ -286,6 +287,17 @@ class ProjectTickets(models.Model):
                 print('koll')
         self.reassign_check = False
         self.done_check = False
+
+    def action_add_to_to_do(self):
+        print('add to to do')
+        return {
+            'type': 'ir.actions.act_window',
+            'name': 'Add To To Do',
+            'res_model': 'add.to.do.activity',
+            'view_mode': 'form',
+            'target': 'new',
+            'context': {'default_name': self.type.name, 'default_parent_id': self.id}
+        }
 
 # def write(self, vals):
 #     print('write')

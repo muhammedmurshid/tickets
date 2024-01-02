@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+        <record id="add_to_to_do_from_helpdesk" model="ir.ui.view">
+            <field name="name">To Do</field>
+            <field name="model">add.to.do.activity</field>
+            <field name="arch" type="xml">
+                <form string="To Do">
+                    <group>
+                        <group class="oe_title">
+                            <field name="name" string="Task" required="1"/>
+                            <field name="assign_to"/>
+                            <field name="parent_id" invisible="1"/>
+                            <field name="deadline"/>
+                        </group>
+
+                    </group>
+                    <footer>
+                        <button string="Add To Do" class="oe_highlight" type="object" name='action_add_to_to_do'/>
+                        <button string="Discard" type="object" special='cancel'/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <record id="add_to_to_do_from_helpdesk_action" model="ir.actions.act_window">
+            <field name="name">To Do</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">add.to.do.activity</field>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="add_to_to_do_from_helpdesk"/>
+            <field name="target">new</field>
+        </record>
+    </data>
+</odoo>
