@@ -36,7 +36,7 @@
                             type="object"
                             attrs="{'invisible': ['|',('state', 'in', ['draft','in_progress','on_hold','to_do','completed','cancelled']), ('done_check', '=', False)]}"/>
                     <button name="action_add_to_to_do" string="Add To Do" class="oe_highlight" type="object"
-                            attrs="{'invisible': ['|',('state', 'in', ['completed','cancelled','draft']), ('added_to_do', '=', True)]}"/>
+                            attrs="{'invisible': ['|',('state', 'in', ['completed','cancelled','draft']), ('added_to_do', '=', True)]}" groups="tickets.tickets_worker"/>
                 </header>
                 <sheet>
                     <div>
