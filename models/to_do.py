@@ -18,9 +18,13 @@ class AddToToDoActivity(models.TransientModel):
             'name': self.name,
             'assigned_to': self.assign_to.id,
             'description': record.description,
-            'dead_line': self.deadline
+            'dead_line': self.deadline,
+            'ticket_id': record.id
         })
-        to_do = self.env['to_do.tasks'].sudo().search([])
+        to_do = self.env['to_do.tasks'].sudo().search([('ticket_id', '=', record.id)])
+        to_do.write({
+            'state': 'task_sent',
+        })
         # to_do.activity_schedule('to_do.activity_to_do_activity_custom', user_id=self.assign_to.id,
         #                        note=f'You have new work scheduled.')
         record.update({

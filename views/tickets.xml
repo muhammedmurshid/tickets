@@ -36,9 +36,16 @@
                             type="object"
                             attrs="{'invisible': ['|',('state', 'in', ['draft','in_progress','on_hold','to_do','completed','cancelled']), ('done_check', '=', False)]}"/>
                     <button name="action_add_to_to_do" string="Add To Do" class="oe_highlight" type="object"
-                            attrs="{'invisible': ['|',('state', 'in', ['completed','cancelled','draft']), ('added_to_do', '=', True)]}" groups="tickets.tickets_worker"/>
+                            attrs="{'invisible': ['|',('state', 'in', ['completed','cancelled','draft']), ('added_to_do', '=', True)]}"
+                            groups="tickets.tickets_worker"/>
                 </header>
                 <sheet>
+                    <div name="button_box" position="inside" class="oe_button_box" attrs="{'invisible':[('state','!=','to_do')]}">
+                        <button class="oe_stat_button" type="object" name="get_current_work"
+                                icon="fa-tasks">
+                            <field string="Task" name="tasks_count" widget="statinfo"/>
+                        </button>
+                    </div>
                     <div>
                         <h2>
                             <field name="reference_no" readonly="True"/>
@@ -78,7 +85,8 @@
                             <field name="purchase"/>
                             <field name="solution_taken" groups="tickets.tickets_worker"/>
                             <field name="check_same_user_id" invisible="True"/>
-                            <field name="expected_completion_date" placeholder="service person expected completion date" attrs="{'invisible':[('state','in',['draft'])]}"/>
+                            <field name="expected_completion_date" placeholder="service person expected completion date"
+                                   attrs="{'invisible':[('state','in',['draft'])]}"/>
 
                             <field name="rating" widget="priority"
                                    attrs="{'invisible': [('state', '!=', 'completed')],'readonly':[('check_two_users_same', '!=', True)]}"/>

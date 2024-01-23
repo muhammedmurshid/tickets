@@ -47,6 +47,24 @@ class ProjectTickets(models.Model):
         for record in self:
             record.display_name = record.type.name + '-' + str(record.date)
 
+    def get_current_work(self):
+        self.ensure_one()
+        return {
+            'type': 'ir.actions.act_window',
+            'name': 'To Do',
+            'view_mode': 'tree,form',
+            'res_model': 'to_do.tasks',
+            'domain': [('ticket_id', '=', self.id)],
+            'context': "{'create': False}"
+        }
+
+    tasks_count = fields.Integer(compute='compute_count')
+
+    def compute_count(self):
+        for record in self:
+            record.tasks_count = self.env['to_do.tasks'].search_count(
+                [('ticket_id', '=', self.id)])
+
     @api.onchange('purchase_assign_id')
     def get_assign_purchase(self):
         self.task_worker_id = self.purchase_assign_id.id
