@@ -47,16 +47,16 @@ class ProjectTickets(models.Model):
         for record in self:
             record.display_name = record.type.name + '-' + str(record.date)
 
-    def get_current_work(self):
-        self.ensure_one()
-        return {
-            'type': 'ir.actions.act_window',
-            'name': 'To Do',
-            'view_mode': 'tree,form',
-            'res_model': 'to_do.tasks',
-            'domain': [('ticket_id', '=', self.id)],
-            'context': "{'create': False}"
-        }
+    # def get_current_work(self):
+    #     self.ensure_one()
+    #     return {
+    #         'type': 'ir.actions.act_window',
+    #         'name': 'To Do',
+    #         'view_mode': 'tree,form',
+    #         'res_model': 'to_do.tasks',
+    #         'domain': [('ticket_id', '=', self.id)],
+    #         'context': "{'create': False}"
+    #     }
 
     tasks_count = fields.Integer(compute='compute_count')
 
@@ -110,7 +110,9 @@ class ProjectTickets(models.Model):
                 self.activity_schedule('tickets.mail_activity_type_tickets_id', user_id=i.id,
                                        note=f'Please Check Tickets {i.name}')
 
-        self.state = 'sent'
+        self.sudo().write({
+            'state': 'sent',
+        })
 
 
 
