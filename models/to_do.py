@@ -5,6 +5,7 @@ class AddToToDoActivity(models.TransientModel):
     _name = 'add.to.do.activity'
     _description = 'Add To Do Activity'
     _inherit = ['mail.thread', 'mail.activity.mixin']
+    _order = 'id desc'
 
     name = fields.Char(string='Name')
     assign_to = fields.Many2one('res.users', string='Assign To', required=True)
@@ -16,10 +17,12 @@ class AddToToDoActivity(models.TransientModel):
         print(record.type.name, 'record', record.date, 'date')
         self.env['to_do.tasks'].sudo().create({
             'name': self.name,
+            'is_this_ticket': True,
             'assigned_to': self.assign_to.id,
             'description': record.description,
             'dead_line': self.deadline,
-            'ticket_id': record.id
+            'ticket_id': record.id,
+            'ticket_owner_id': record.name.id
         })
         to_do = self.env['to_do.tasks'].sudo().search([('ticket_id', '=', record.id)])
         to_do.write({
