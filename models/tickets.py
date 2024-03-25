@@ -17,7 +17,7 @@ class ProjectTickets(models.Model):
     description = fields.Text(string='Description')
     priority = fields.Selection([
         ('low', 'Low'), ('medium', 'Medium'), ('high', 'High')], string='Priority', default='low')
-    dead_line = fields.Datetime(string='Dead Line')
+    dead_line = fields.Datetime(string='Dead Line', required=True)
     attachment_file = fields.Binary(string='Attachment')
     note = fields.Text(string='Note')
     task_worker_id = fields.Many2one('res.users', string='Task Worker')
