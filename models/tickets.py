@@ -1,5 +1,6 @@
 from odoo import models, fields, api, _
-from datetime import datetime
+from datetime import datetime,timedelta
+from odoo.exceptions import UserError
 
 
 class ProjectTickets(models.Model):
@@ -42,6 +43,7 @@ class ProjectTickets(models.Model):
                                   string='Currency')
     added_to_do = fields.Boolean(string='Added To Do')
     expected_completion_date = fields.Date(string='Expected Completion Date')
+    stress_days = fields.Integer(string='Stress Days', related='type.stress_days')
 
     def _compute_display_name(self):
         for record in self:
@@ -114,7 +116,15 @@ class ProjectTickets(models.Model):
             'state': 'sent',
         })
 
+        if self.stress_days != 0:
 
+            # Calculate the target date by adding 5 days to the start date
+            target_date = self.date + timedelta(days=self.stress_days)
+            print('target_date', target_date)
+
+            # Check if the target date is 5 days after the start date
+            if target_date >= self.dead_line:
+                raise UserError("Target must be " + str(self.stress_days) + " days after Deadline.")
 
     @api.model
     def create(self, vals):

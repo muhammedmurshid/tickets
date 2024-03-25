@@ -62,6 +62,7 @@
                             <field name="date"/>
                             <field name="type" options="{'no_create': True}"
                                    attrs="{'invisible': [('purchase', '=', True)]}"/>
+                            <field name="stress_days" groups="base.group_no_one"/>
                             <field name="product"
                                    attrs="{'invisible': [('purchase', '!=', True)],'required':[('purchase','=',True)]}"/>
                             <field name="product_price" widget='monetary' options="{'currency_field': 'currency_id'}"

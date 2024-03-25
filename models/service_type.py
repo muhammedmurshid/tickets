@@ -9,6 +9,7 @@ class ServiceTypes(models.Model):
     name = fields.Char(string='Service Type', required=True)
     assign_to = fields.Many2one('res.users', string='Assign To', required=True)
     assign_to_users = fields.Many2many('res.users', string='Assign To Users')
+    stress_days = fields.Integer(string='Stress Days')
 
     def print_current_users(self):
 
@@ -19,3 +20,4 @@ class ServiceTypes(models.Model):
                 print('same')
             else:
                 print('not same')
+

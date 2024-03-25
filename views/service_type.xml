@@ -16,6 +16,9 @@
                             <field name="assign_to"/>
                             <field name="assign_to_users" widget="many2many_tags"/>
                         </group>
+                        <group>
+                            <field name="stress_days"/>
+                        </group>
                     </group>
                 </sheet>
                 <div class="oe_chatter">
