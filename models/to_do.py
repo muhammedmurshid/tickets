@@ -24,6 +24,8 @@ class AddToToDoActivity(models.TransientModel):
             'ticket_id': record.id,
             'ticket_owner_id': record.name.id
         })
+        self.activity_schedule('to_do.activity_to_do_activity_custom', user_id=self.assign_to.id,
+                               note=f'Check on your tasks {self.assign_to.name}')
         to_do = self.env['to_do.tasks'].sudo().search([('ticket_id', '=', record.id)])
         to_do.write({
             'state': 'task_sent',
