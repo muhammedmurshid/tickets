@@ -197,6 +197,12 @@ class ProjectTickets(models.Model):
 
         }
         self.env['mail.mail'].sudo().create(main_content).send()
+        self.env['logic.task.other'].sudo().create({'name': self.description,
+                                                    'task_types': 'other',
+                                                    })
+        rec = self.env['logic.task.other'].search([], limit=1, order='id desc')
+        rec.sudo().write({'state': 'completed'})
+        # 'completed' 'on_holk'
 
     @api.depends('current_user_id')
     def get_current_user(self):
